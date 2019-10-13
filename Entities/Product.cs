@@ -1,6 +1,6 @@
 using System;
 
-namespace Webapi.Entities {
+namespace WebApi.Entities {
     public class Product {
 
         public int Id { get; set; }

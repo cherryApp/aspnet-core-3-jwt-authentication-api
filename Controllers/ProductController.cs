@@ -5,11 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using LiteDB;
-using JWT.Algorithms;
-using JWT.Builder;
-using Newtonsoft.Json;
 
-using Ifsz.Webapi.Server.Models;
+using WebApi.Entities;
 
 namespace Ifsz.Webapi.Server.Controllers
 {

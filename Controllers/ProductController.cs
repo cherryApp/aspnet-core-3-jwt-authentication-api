@@ -80,6 +80,55 @@ namespace Ifsz.Webapi.Server.Controllers
             var result = new JsonResult(newProduct);
             return result;
         }
+
+        [HttpGet]
+        [Route("generate")]
+        public JsonResult Generate()
+        {
+            String[] names = new String[] {
+                "Iron", "Washing Machine", "Vacuum cleaner", 
+                "Blender", "Coffee Maker", "Dishwasher",
+                "Hair Dryer", "Fan", "Freezer", "Juicer",
+                "Micro", "TV", "Refrigerator", "Shaver", 
+                "Stove", "Toaster" 
+            };
+
+            String[] manufacturers = new String[] {
+                "Ariston", "Bosch", "Zanussi", "Philips", 
+                "Electrolux", "Moulinex", "AEG", "Candy", 
+                "Szarvasi", "Vörös Csillag", "Custom"
+            };
+
+            Random r = new Random();
+
+            using (var db = new LiteDatabase(@".\DB.db"))
+            {
+                var col = db.GetCollection<Product>("products");
+                for (int i = 0; i < 10000; i++)
+                {
+                    Product p = new Product();
+                    String name = getRandom(names);
+                    String man = getRandom(manufacturers);
+                    p.Name = name;
+                    p.Manufacturer = man;
+                    p.Price = r.Next(1000, 250000);
+                    p.Description = name + " from the " + man;
+                    p.Active = true;
+                    col.Insert(p);
+                }
+            }
+            
+            var message = new {success = true};
+            var result = new JsonResult(message);
+            return result;
+        }
+
+        private String getRandom(String[] list)
+        {
+            Random r = new Random();
+            int index = r.Next(0, list.Length);
+            return list[index];
+        }
     }
 }
 

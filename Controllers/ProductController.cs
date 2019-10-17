@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using LiteDB;
+using Microsoft.AspNetCore.Authorization;
 
 using WebApi.Entities;
 
 namespace Ifsz.Webapi.Server.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class ProductController : ControllerBase
@@ -30,6 +32,35 @@ namespace Ifsz.Webapi.Server.Controllers
             {
                 var col = db.GetCollection<Product>("products");
                 return col.FindAll();
+            }
+        }
+        
+        [HttpGet]
+        [Route("{id}")]
+        public IEnumerable<Product> GetById(int id)
+        {
+            _logger.LogInformation("Client has been sent a new get Request!");
+
+            using (var db = new LiteDatabase(@".\DB.db"))
+            {
+                var col = db.GetCollection<Product>("products");
+                return new Product[] {col.FindById(id)};
+            }
+        }
+
+        [HttpGet]
+        [Route("query")]
+        public IEnumerable<Product> GetByQuery(string name, string manufacturer)
+        {
+            _logger.LogInformation("Client has been sent a new get Request!");
+
+            using (var db = new LiteDatabase(@".\DB.db"))
+            {
+                var col = db.GetCollection<Product>("products");
+                return col.Find(
+                    x => x.Name.Contains(name) && 
+                    x.Manufacturer.Contains(manufacturer)
+                );
             }
         }
 
@@ -104,7 +135,7 @@ namespace Ifsz.Webapi.Server.Controllers
             using (var db = new LiteDatabase(@".\DB.db"))
             {
                 var col = db.GetCollection<Product>("products");
-                for (int i = 0; i < 10000; i++)
+                for (int i = 0; i < 1000; i++)
                 {
                     Product p = new Product();
                     String name = getRandom(names);

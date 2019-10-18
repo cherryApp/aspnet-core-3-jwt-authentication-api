@@ -99,7 +99,9 @@ namespace Ifsz.Webapi.Server.Controllers
                 Name = product.Name,
                 Description = product.Description,
                 Price = product.Price,
-                Active = product.Active,
+                Active = true,
+                Manufacturer = product.Manufacturer,
+                ItemCode = product.ItemCode,
             };
 
             using (var db = new LiteDatabase(@".\DB.db"))
@@ -110,6 +112,18 @@ namespace Ifsz.Webapi.Server.Controllers
 
             var result = new JsonResult(newProduct);
             return result;
+        }
+
+        [HttpPost]
+        [Route("validate")]
+        public JsonResult ValidateFn([FromBody]Product product)
+        {
+            ValidationResult validationResult = product.validateName();
+            if (validationResult.valid) {
+                product.Price = 25000;
+                validationResult.value = product;
+            }
+            return new JsonResult(validationResult);
         }
 
         [HttpGet]
